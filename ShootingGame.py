@@ -17,7 +17,7 @@ def drawObject(obj, x, y):
     global gamePad
     gamePad.blit(obj,(x,y))
     
-
+ 
 # 운석을 맞춘 개수 계산
 def writeScore(count):
     global gamePad
