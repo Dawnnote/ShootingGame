@@ -9,6 +9,18 @@ padHeight = 640
 
 def initGame():
     global gamePad, clock, background, fighter, missile, explosion, missileSound, gameOverSound
+    pygame.init()
+    gamePad = pygame.display.set_mode((padWidth, padHeight))
+    pygame.display.set_caption('PyShooting')            # 게임 이름
+    background = pygame.image.load('background.png')    # 배경 그림
+    fighter = pygame.image.load('fighter.png')          # 전투기 그림
+    missile = pygame.image.load('missile.png')          # 미사일 그림
+    explosion = pygame.image.load('explosion.png')      # 폭발 그림
+    pygame.mixer.music.load('musix.wav')                # 배경 음악
+    pygame.mixer.music.play(-1)                         # 배경 음악 재생
+    missileSound = pygame.mixer.Sound('missle.wav')     # 미사일 사운드
+    gameOverSound = pygame.mixer.Sound('gameover.wav')  # 게임 오버 사운드
+    clock = pygame.time.Clock()
 
 def runGame():
     global gamepad, clock, background, fighter, missile, explosion, missileSound
