@@ -12,7 +12,7 @@ def initGame():
 
 def runGame():
     global gamepad, clock, background, fighter, missile, explosion, missileSound
-
+ 
 def drawObject(obj, x, y):
     global gamePad
     gamePad.blit(obj,(x,y))
