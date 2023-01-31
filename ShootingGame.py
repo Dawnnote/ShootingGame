@@ -13,6 +13,8 @@ rockImage = ['rock01.png','rock02.png','rock03.png','rock04.png','rock05.png',
             'rock21.png','rock22.png','rock23.png','rock24.png','rock025.png',
             'rock26.png','rock27.png','rock28.png','rock29.png','rock30.png',]
 
+explosionSound = ['explosion01.wav','explosion02.wav','explosion03.wav','explosion04.wav', ]
+
 def initGame():
     global gamePad, clock, background, fighter, missile, explosion, missileSound, gameOverSound
     pygame.init()
@@ -39,6 +41,7 @@ def runGame():
     rockSize = rock.get_rect().size # 운석크기 
     rockWidth = rockSize[0] 
     rockHeight = rockSize[1] 
+    destroySound = pygame.mixer.Sound(random.choice(explosionSound))
 
     # 운석 초기 위치 설정 
     rockX = random.randrange(0, padHeight, - rockWidth) 
@@ -75,7 +78,8 @@ def runGame():
                 elif event.key == pygame.K_RIGHT :
                     fighterX += 5 
 
-                elif event.key == pygame.K_SPACE :
+                elif event.key == pygame.K_SPACE :   # 미사일 발사
+                        missileSound.play() # 미사일 사운드 재생
                         missileX = x + fighterWidth/2 
                         missileY = y - fighterHeight
                         missileXY.append([missileX , missileY])
@@ -93,6 +97,12 @@ def runGame():
             x=0
         elif x > padWidth - fighterWidth :
             x = padWidth - fighterWidth
+
+        # 전투기가 운석과 충돌했는지 체크 
+        if y > rockY + rockHeight : 
+            if(rockX > x and rockX < x + fighterWidth) or \
+                 (rockX + rockWidth > x and rockX + rockWidth < x +fighterWidth) : 
+                 crash()
 
         # 비행기를 게임 화면의 (x,y) 좌표에 그림
         drawObject(fighter, x, y)
@@ -121,6 +131,9 @@ def runGame():
             for bx ,by in missileXY : 
                 drawObject(missile, bx, by)
                 
+        # 운석 맞춘 점수 표시 
+        writeScore(shotCount) 
+
         # 운석 아래로 움직임 
         rockY += rockSpeed
 
@@ -131,13 +144,25 @@ def runGame():
             rockSize = rock.get_rect().size # 운석크기 
             rockWidth = rockSize[0] 
             rockHeight = rockSize[1] 
+            destroySound = pygame.mixer.Sound(random.choice(explosionSound))
             rockX = random.randrange(0, padHeight, - rockWidth) 
             rockY =0 
+            rockPassed += 1 
+
+        
+        # 운석 3개 놓치면 게임 오버 
+        if rockPassed == 3 : 
+            gameOver() 
+
+        # 놓친 운석 표시 
+        writePassed(rockPassed) 
 
         # 운석을 맞춘 경우 
         if isShot : 
             # 운석 폭발 
             drawObject(explosion , rockX , rockY) 
+            destroySound.play()
+
             # 새로운 운석
             rock= pygame.image.load(random.choice(rockImage))
             rockSize = rock.get_rect().size # 운석크기 
@@ -145,7 +170,13 @@ def runGame():
             rockHeight = rockSize[1] 
             rockX = random.randrange(0, padHeight, - rockWidth) 
             rockY =0 
+            destroySound = pygame.mixer.Sound(random.choice(explosionSound))
             isShot =False
+
+            # 운석 맞추면 속도 증가 
+            rockSpeed += 0.02 
+            if rockSpeed >= 10 : 
+                rockSpeed = 10 
 
 
         # 운석 그리기 
@@ -157,16 +188,7 @@ def runGame():
         clock.tick(60) 
     
     pygame.quit()
-
-
-
-def drawObject(obj, x, y):
-    global gamePad
     
-
-# 운석을 맞춘 개수 계산
-def writeScore(count):
-    global gamePad
  
 def drawObject(obj, x, y):
     global gamePad
